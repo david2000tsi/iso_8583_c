@@ -202,7 +202,7 @@ int generate_message(char *message)
 
 		if(glb_fields[i] != NULL)
 		{
-			if(is_variable_field_length(real_i) == 0)
+			if(is_variable_field_length(real_i))
 			{
 				size_of_length = get_size_length_of_variable_field(real_i);
 				sprintf(format, "%%0%dd", size_of_length);
