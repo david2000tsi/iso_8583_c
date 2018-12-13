@@ -15,6 +15,34 @@ static char glb_second_bitmap[BITMAP_LEN_BYTES];
 static char glb_iso_pack[LEN_MAX_ISO];
 static char *glb_fields[NUM_FIELD_MAX];
 
+static int has_second_bitmap();
+
+static void append_str_data(char *original_str, const char *new_str)
+{
+	char msg[LEN_MAX_ISO];
+
+	sprintf(msg, "%s%s", original_str, new_str);
+
+	sprintf(original_str, "%s", msg);
+}
+
+static void append_hex_data(char *original_str, const unsigned char new_str)
+{
+	char msg[LEN_MAX_ISO];
+
+	sprintf(msg, "%s%02X", original_str, new_str);
+
+	sprintf(original_str, "%s", msg);
+}
+
+static void update_bit_one()
+{
+	if(has_second_bitmap())
+	{
+		glb_first_bitmap[0] |= MASK;
+	}
+}
+
 static int add_in_bitmap(int field)
 {
 	unsigned char position = 0;
@@ -38,6 +66,9 @@ static int add_in_bitmap(int field)
 		shift = field % BITS;
 
 		bitmap[position] |= (MASK >> shift);
+
+		update_bit_one();
+
 		return 0;
 	}
 
@@ -67,6 +98,9 @@ static int remove_from_bitmap(int field)
 		shift = field % BITS;
 
 		bitmap[position] &= ~(MASK >> shift);
+
+		update_bit_one();
+
 		return 0;
 	}
 
@@ -131,10 +165,12 @@ int add_field(int field, const char *data, int length)
 
 	if(is_valid_field_value(field, data))
 	{
-		field_value = (char *) malloc(length);
+		field_value = (char *) malloc(length + 1);
 		if(field_value)
 		{
 			memcpy(field_value, data, length);
+			field_value[length] = '\0';
+
 			glb_fields[field - 1] = field_value;
 
 			add_in_bitmap(field);
@@ -178,20 +214,28 @@ int generate_message(char *message)
 	}
 
 	// Add mti to iso message.
-	sprintf(glb_iso_pack, "%s", glb_mti);
+	append_str_data(glb_iso_pack, glb_mti);
 
 	// Add first bitmap to iso message.
 	for(i = 0; i < BITMAP_LEN_BYTES; i++)
 	{
-		sprintf(glb_iso_pack + strlen(glb_iso_pack), "%02x", glb_first_bitmap[i]);
+		append_hex_data(glb_iso_pack, (const unsigned char) glb_first_bitmap[i]);
 	}
 
-	// Add second bitmap to iso message (case there is one).
+	// Add second bitmap to iso message (case there is one), it will be stored in the field 1.
 	if(has_second_bitmap())
 	{
-		for(i = 0; i < BITMAP_LEN_BYTES; i++)
+		glb_fields[0] = (char *) malloc(BITMAP_HEX_BYTES + 1);
+		if(glb_fields[0] != NULL)
 		{
-			sprintf(glb_iso_pack + strlen(glb_iso_pack), "%02x", glb_second_bitmap[i]);
+			*glb_fields[0] = '\0';
+
+			for(i = 0; i < BITMAP_LEN_BYTES; i++)
+			{
+				append_hex_data(glb_fields[0], (const unsigned char) glb_second_bitmap[i]);
+			}
+
+			add_in_bitmap(1);
 		}
 	}
 
@@ -209,11 +253,11 @@ int generate_message(char *message)
 				sprintf(glb_iso_pack + strlen(glb_iso_pack), format, strlen(glb_fields[i]));
 			}
 
-			sprintf(glb_iso_pack + strlen(glb_iso_pack), "%s", glb_fields[i]);
+			append_str_data(glb_iso_pack, (const char *) glb_fields[i]);
 		}
 	}
 
-	memcpy(message, glb_iso_pack, strlen(glb_iso_pack) + 1);
+	sprintf(message, "%s", glb_iso_pack);
 
 	debug_print("Message generated!\n", __FUNCTION__);
 

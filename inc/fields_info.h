@@ -54,6 +54,7 @@
 #define MTI_LEN_BYTES        4
 #define BITMAP_LEN_BITS      64
 #define BITMAP_LEN_BYTES     (BITMAP_LEN_BITS / 8)
+#define BITMAP_HEX_BYTES     (BITMAP_LEN_BYTES * 2)
 #define NUM_FIELD_MIN        1
 #define NUM_FIELD_MAX        128
 #define LEN_MAX_ISO          (1024 * 10)
