@@ -17,6 +17,7 @@ static char *glb_fields[NUM_FIELD_MAX];
 
 static int has_second_bitmap();
 
+// Appends new_str to end of original original_str.
 static void append_str_data(char *original_str, const char *new_str)
 {
 	char msg[LEN_MAX_ISO];
@@ -26,6 +27,7 @@ static void append_str_data(char *original_str, const char *new_str)
 	sprintf(original_str, "%s", msg);
 }
 
+// Appends new_str in hex format to end of original original_str.
 static void append_hex_data(char *original_str, const unsigned char new_str)
 {
 	char msg[LEN_MAX_ISO];
@@ -35,6 +37,7 @@ static void append_hex_data(char *original_str, const unsigned char new_str)
 	sprintf(original_str, "%s", msg);
 }
 
+// Update the bit one of first bitmap.
 static void update_bit_one()
 {
 	if(has_second_bitmap())
@@ -43,6 +46,7 @@ static void update_bit_one()
 	}
 }
 
+// Add field in the bitmap.
 static int add_in_bitmap(int field)
 {
 	unsigned char position = 0;
@@ -75,6 +79,7 @@ static int add_in_bitmap(int field)
 	return -1;
 }
 
+// Remove field from the bitmap.
 static int remove_from_bitmap(int field)
 {
 	unsigned char position = 0;
@@ -107,6 +112,7 @@ static int remove_from_bitmap(int field)
 	return -1;
 }
 
+// Check if there is a second bitmap.
 static int has_second_bitmap()
 {
 	int i;
