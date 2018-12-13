@@ -13,6 +13,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJ_PATH}/bin)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 set(SOURCE
+	${PROJ_PATH}/src/debug.c
 	${PROJ_PATH}/src/fields_info.c
 	${PROJ_PATH}/src/iso_8583.c
 	${PROJ_PATH}/main.c

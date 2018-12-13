@@ -4,6 +4,7 @@
 
 #include "iso_8583.h"
 #include "fields_info.h"
+#include "debug.h"
 
 #define MASK (unsigned char) 128 // 1000 0000
 #define BITS (unsigned char)   8
@@ -98,6 +99,8 @@ void clear()
 	{
 		glb_fields[i] = NULL;
 	}
+
+	debug_print("Internal variables cleared\n", __FUNCTION__);
 }
 
 int init(int iso_version)
@@ -116,6 +119,8 @@ int set_mti(const char *mti)
 		memcpy(glb_mti, mti, MTI_LEN_BYTES);
 		return 0;
 	}
+
+	debug_print("Error: [%s]: Invalid mti\n", __FUNCTION__);
 
 	return -1;
 }
@@ -138,6 +143,8 @@ int add_field(int field, const char *data, int length)
 		}
 	}
 
+	debug_print("Error: [%s]: Invalid field number (%d)\n", __FUNCTION__, field);
+
 	return -1;
 }
 
@@ -152,6 +159,8 @@ int remove_field(int field)
 
 		return 0;
 	}
+
+	debug_print("Error: [%s]: Invalid field number (%d)\n", __FUNCTION__, field);
 
 	return -1;
 }
@@ -205,6 +214,8 @@ int generateMessage(char *message)
 	}
 
 	memcpy(message, glb_iso_pack, strlen(glb_iso_pack) + 1);
+
+	debug_print("Message generated!\n", __FUNCTION__);
 
 	return 0;
 }

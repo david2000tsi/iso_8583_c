@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "fields_info.h"
+#include "debug.h"
 
 static void load_iso_1987();
 static void load_iso_1993();
@@ -119,14 +120,17 @@ int init_field_info(int iso_version)
 	{
 		case ISO8583_1987:
 			load_iso_1987();
+			debug_print("ISO 1987 loaded successfully\n");
 			ret = 0;
 			break;
 		case ISO8583_1993:
 			load_iso_1993();
+			debug_print("ISO 1993 loaded successfully\n");
 			ret = 0;
 			break;
 		case ISO8583_2003:
 			load_iso_2003();
+			debug_print("Error: ISO 1993 not implemented yet\n");
 			break;
 		default:
 			break;
