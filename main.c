@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	add_field(2, "0123456789012345", 16);
 	add_field(90, "899999999999999999999999999999999999999998", 42);
 
-	generateMessage(iso_msg);
+	generate_message(iso_msg);
 
 	if(strlen(iso_msg) > 0)
 	{

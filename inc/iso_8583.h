@@ -41,6 +41,6 @@ void clear();
  * @param[out] message The buffer where the message will be stored.
  * @return Returns 0 to success or -1 case error.
  */
-int generateMessage(char *message);
+int generate_message(char *message);
 
 #endif

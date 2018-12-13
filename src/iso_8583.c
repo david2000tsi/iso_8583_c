@@ -18,7 +18,7 @@ static char *glb_fields[NUM_FIELD_MAX];
 static int add_in_bitmap(int field)
 {
 	unsigned char position = 0;
-	unsigned char swift = 0;
+	unsigned char shift = 0;
 	char *bitmap = NULL;
 
 	if(is_valid_field(field))
@@ -35,9 +35,9 @@ static int add_in_bitmap(int field)
 
 		field--;
 		position = field / BITS;
-		swift = field % BITS;
+		shift = field % BITS;
 
-		bitmap[position] |= ( MASK >> swift);
+		bitmap[position] |= (MASK >> shift);
 		return 0;
 	}
 
@@ -47,7 +47,7 @@ static int add_in_bitmap(int field)
 static int remove_from_bitmap(int field)
 {
 	unsigned char position = 0;
-	unsigned char swift = 0;
+	unsigned char shift = 0;
 	char *bitmap = NULL;
 
 	if(is_valid_field(field))
@@ -64,9 +64,9 @@ static int remove_from_bitmap(int field)
 
 		field--;
 		position = field / BITS;
-		swift = field % BITS;
+		shift = field % BITS;
 
-		bitmap[position] &= ~(MASK >> swift);
+		bitmap[position] &= ~(MASK >> shift);
 		return 0;
 	}
 
@@ -165,7 +165,7 @@ int remove_field(int field)
 	return -1;
 }
 
-int generateMessage(char *message)
+int generate_message(char *message)
 {
 	int i = 0;
 	int real_i = 0;
