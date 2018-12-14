@@ -10,9 +10,32 @@ static void load_iso_2003();
 
 static struct field_info fields_info[NUM_FIELD_MAX];
 
+#define MTI_1 "012"      // {"0", "1", "2"}                          First position;
+#define MTI_2 "12345678" // {"1", "2", "3", "4", "5", "6", "7", "8"} Second position;
+#define MTI_3 "01234567" // {"0", "1", "2", "3", "4", "5", "6", "7"} Third position;
+#define MTI_4 "012345"   // {"0", "1", "2", "3", "4", "5"}           Fourth position.
+
 int is_valid_mti(const char *mti)
 {
-	return (strlen(mti) == MTI_LEN_BYTES);
+	char mti_1 = 0;
+	char mti_2 = 0;
+	char mti_3 = 0;
+	char mti_4 = 0;
+
+	if((strlen(mti) == MTI_LEN_BYTES))
+	{
+		mti_1 = *(mti);
+		mti_2 = *(mti + 1);
+		mti_3 = *(mti + 2);
+		mti_4 = *(mti + 3);
+
+		if(strchr(MTI_1, mti_1) != NULL && strchr(MTI_2, mti_2) != NULL && strchr(MTI_3, mti_3) != NULL && strchr(MTI_4, mti_4) != NULL)
+		{
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 int is_valid_field(int field)
