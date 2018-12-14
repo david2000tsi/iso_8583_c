@@ -18,3 +18,10 @@ Run cmake to generate makefiles annd make to compile:
 cmake ..
 make
 ```
+
+Run main file:
+
+```
+cd <project_path>
+./bin/<bin_file>
+```

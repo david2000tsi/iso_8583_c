@@ -139,8 +139,6 @@ void clear()
 	{
 		glb_fields[i] = NULL;
 	}
-
-	debug_print("Internal variables cleared\n", __FUNCTION__);
 }
 
 int init(int iso_version)
