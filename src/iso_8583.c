@@ -457,7 +457,7 @@ int iso_decode_message(const char *message)
 	struct fi_field_info _fi_field;
 	int length = 0;
 	char msg_to_decode[FI_LEN_MAX_ISO];
-	char buffer[2014];
+	char buffer[1024];
 
 	iso_release();
 
