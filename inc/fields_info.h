@@ -105,7 +105,7 @@
 /**
  * Struct to be store fields info.
  */
-struct field_info
+struct fi_field_info
 {
 	unsigned char type[32];
 	int is_variable_field;
@@ -122,32 +122,32 @@ struct field_info
  *                 ISO8583_2003 for iso 2003;
  * @return Returns 0 to success or -1 case error.
  */
-int init_field_info(int iso_version);
+int fi_init_field_info(int iso_version);
 
 /**
- * @brief Mount struct field_info using received info.
+ * @brief Mount struct fi_field_info using received info.
  * @param[in] type Type of field data.
  * @param[in] is_variable_field Field is variable, 0 to false or 1 to true.
  * @param[in] length Length of field.
  * @param[in] description Description of field.
  * @param[in] format Field data format.
- * @return Returns struct field_info with informed data.
+ * @return Returns struct fi_field_info with informed data.
  */
-struct field_info mount_field_info(const char *type, int is_variable_field, int length, const char *description, const char *format);
+struct fi_field_info fi_mount_field_info(const char *type, int is_variable_field, int length, const char *description, const char *format);
 
 /**
  * @brief Validate mti length.
  * @param[in] mti The mti to be validated.
  * @return Returns 1 if valid or 0 if invalid.
  */
-int is_valid_mti(const char *mti);
+int fi_is_valid_mti(const char *mti);
 
 /**
  * @brief Validate field number.
  * @param[in] field The field number to be validated.
  * @return Returns 1 if valid or 0 if invalid.
  */
-int is_valid_field(int field);
+int fi_is_valid_field(int field);
 
 /**
  * @brief Validate field value.
@@ -155,35 +155,35 @@ int is_valid_field(int field);
  * @param[in] data The data of field to be validated.
  * @return Returns 1 if data is valid or 0 if invalid.
  */
-int is_valid_field_value(int field, const char *data);
+int fi_is_valid_field_value(int field, const char *data);
 
 /**
  * @brief Validate if field has variable length.
  * @param[in] field The field number to be validated.
  * @return Returns 1 id field has variable length, 0 if is not variable length or -1 if field is invalid.
  */
-int is_variable_field_length(int field);
+int fi_is_variable_field_length(int field);
 
 /**
  * @brief Gets info from field.
  * @param[in] field The field number to be recovered.
- * @param[out] fi_field The struct field_info when info will be stored.
+ * @param[out] fi_field The struct fi_field_info when info will be stored.
  * @return Returns 0 to success or -1 case error.
  */
-int get_field_info(int field, struct field_info *fi_field);
+int fi_get_field_info(int field, struct fi_field_info *fi_field);
 
 /**
  * @brief Gets field length.
  * @param[in] field The field number to be recovered.
  * @return Returns the field length or -1 case error.
  */
-int get_field_length(int field);
+int fi_get_field_length(int field);
 
 /**
  * @brief Gets field size of length, case the field length is 999 the size of length will be 3 (strlen(999)).
  * @param[in] field The field number to be recovered.
  * @return Returns the field size of length or -1 case error.
  */
-int get_size_length_of_variable_field(int field);
+int fi_get_size_length_of_variable_field(int field);
 
 #endif

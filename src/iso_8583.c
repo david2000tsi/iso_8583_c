@@ -88,7 +88,7 @@ static int is_up_field(int field)
 	unsigned char shift = 0;
 	char *bitmap = NULL;
 
-	if(is_valid_field(field))
+	if(fi_is_valid_field(field))
 	{
 		if(field <= BITMAP_LEN_BITS)
 		{
@@ -117,7 +117,7 @@ static int add_in_bitmap(int field)
 	unsigned char shift = 0;
 	char *bitmap = NULL;
 
-	if(is_valid_field(field))
+	if(fi_is_valid_field(field))
 	{
 		if(field < BITMAP_LEN_BITS)
 		{
@@ -150,7 +150,7 @@ static int remove_from_bitmap(int field)
 	unsigned char shift = 0;
 	char *bitmap = NULL;
 
-	if(is_valid_field(field))
+	if(fi_is_valid_field(field))
 	{
 		if(field < BITMAP_LEN_BITS)
 		{
@@ -272,7 +272,7 @@ int init(int iso_version)
 {
 	clear_internal_vars();
 
-	init_field_info(iso_version);
+	fi_init_field_info(iso_version);
 
 	return -1;
 }
@@ -295,7 +295,7 @@ void release()
 
 int set_mti(const char *mti)
 {
-	if(is_valid_mti(mti))
+	if(fi_is_valid_mti(mti))
 	{
 		memcpy(glb_mti, mti, MTI_LEN_BYTES);
 		return 0;
@@ -327,7 +327,7 @@ int add_field(int field, const char *data, int length)
 		return -1;
 	}
 
-	if(is_valid_field_value(field, data))
+	if(fi_is_valid_field_value(field, data))
 	{
 		field_value = (char *) malloc(length + 1);
 		if(field_value)
@@ -356,7 +356,7 @@ int get_field(int field, char *data)
 		return -1;
 	}
 
-	if(is_valid_field(field) && glb_fields[field - 1] != NULL)
+	if(fi_is_valid_field(field) && glb_fields[field - 1] != NULL)
 	{
 		sprintf(data,"%s", glb_fields[field - 1]);
 		return 0;
@@ -373,7 +373,7 @@ int remove_field(int field)
 		return -1;
 	}
 
-	if(is_valid_field(field) && glb_fields[field - 1] != NULL)
+	if(fi_is_valid_field(field) && glb_fields[field - 1] != NULL)
 	{
 		free(glb_fields[field - 1]);
 		glb_fields[field - 1] = NULL;
@@ -433,9 +433,9 @@ int generate_message(char *message)
 
 		if(glb_fields[i] != NULL)
 		{
-			if(is_variable_field_length(real_i))
+			if(fi_is_variable_field_length(real_i))
 			{
-				size_of_length = get_size_length_of_variable_field(real_i);
+				size_of_length = fi_get_size_length_of_variable_field(real_i);
 				sprintf(format, "%%0%dd", size_of_length);
 				sprintf(glb_iso_pack + strlen(glb_iso_pack), format, strlen(glb_fields[i]));
 			}
@@ -454,7 +454,7 @@ int generate_message(char *message)
 int decode_message(const char *message)
 {
 	int i = 0;
-	struct field_info _fi_field;
+	struct fi_field_info _fi_field;
 	int length = 0;
 	char msg_to_decode[LEN_MAX_ISO];
 	char buffer[2014];
@@ -466,7 +466,7 @@ int decode_message(const char *message)
 
 	// Extract mti.
 	extract_str_data(msg_to_decode, MTI_LEN_BYTES, glb_mti);
-	if(!is_valid_mti(glb_mti))
+	if(!fi_is_valid_mti(glb_mti))
 	{
 		debug_print("Error: [%s]: Invalid ISO message!\n", __FUNCTION__);
 		return -1;
@@ -488,11 +488,11 @@ int decode_message(const char *message)
 	{
 		if(is_up_field(i) > 0)
 		{
-			if(get_field_info(i, &_fi_field) == 0)
+			if(fi_get_field_info(i, &_fi_field) == 0)
 			{
 				if(_fi_field.is_variable_field)
 				{
-					length = get_size_length_of_variable_field(i);
+					length = fi_get_size_length_of_variable_field(i);
 					extract_str_data(msg_to_decode, length, buffer);
 					length = strtol(buffer, NULL, 10);
 				}
