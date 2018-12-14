@@ -321,6 +321,12 @@ int add_field(int field, const char *data, int length)
 {
 	char *field_value = NULL;
 
+	if(field == 1)
+	{
+		debug_print("Error: [%s]: Reserved use for field (%d)!\n", __FUNCTION__, field);
+		return -1;
+	}
+
 	if(is_valid_field_value(field, data))
 	{
 		field_value = (char *) malloc(length + 1);
@@ -344,6 +350,12 @@ int add_field(int field, const char *data, int length)
 
 int get_field(int field, char *data)
 {
+	if(field == 1)
+	{
+		debug_print("Error: [%s]: Reserved use for field (%d)!\n", __FUNCTION__, field);
+		return -1;
+	}
+
 	if(is_valid_field(field) && glb_fields[field - 1] != NULL)
 	{
 		sprintf(data,"%s", glb_fields[field - 1]);
@@ -355,6 +367,12 @@ int get_field(int field, char *data)
 
 int remove_field(int field)
 {
+	if(field == 1)
+	{
+		debug_print("Error: [%s]: Reserved use for field (%d)!\n", __FUNCTION__, field);
+		return -1;
+	}
+
 	if(is_valid_field(field) && glb_fields[field - 1] != NULL)
 	{
 		free(glb_fields[field - 1]);
