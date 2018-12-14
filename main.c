@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 	printf("\nGenerate ISO message test:\n");
 
-	init(ISO8583_1987);
+	init(FI_ISO8583_1987);
 	set_mti("0200");
 
 	add_field(2, "0123456789012345", 16);

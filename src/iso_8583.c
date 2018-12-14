@@ -11,19 +11,19 @@
 #define BITS (unsigned char)   8
 
 // String: Stores the mti.
-static char glb_mti[MTI_LEN_BYTES + 1];
+static char glb_mti[FI_MTI_LEN_BYTES + 1];
 
 // Byte Vector: Store the first bitmap;
-static char glb_first_bitmap[BITMAP_LEN_BYTES];
+static char glb_first_bitmap[FI_BITMAP_LEN_BYTES];
 
 // Byte Vector: Store the second bitmap;
-static char glb_second_bitmap[BITMAP_LEN_BYTES];
+static char glb_second_bitmap[FI_BITMAP_LEN_BYTES];
 
 // String: Store the iso message;
-static char glb_iso_pack[LEN_MAX_ISO + 1];
+static char glb_iso_pack[FI_LEN_MAX_ISO + 1];
 
 // Pointer Vector: Store the fields data.
-static char *glb_fields[NUM_FIELD_MAX];
+static char *glb_fields[FI_NUM_FIELD_MAX];
 
 // Function prototype.
 static int has_second_bitmap();
@@ -31,7 +31,7 @@ static int has_second_bitmap();
 // Appends new_str to end of original original_str.
 static void append_str_data(char *original_str, const char *new_str)
 {
-	char msg[LEN_MAX_ISO];
+	char msg[FI_LEN_MAX_ISO];
 
 	// Create new buffer with original_str and new_str.
 	sprintf(msg, "%s%s", original_str, new_str);
@@ -42,7 +42,7 @@ static void append_str_data(char *original_str, const char *new_str)
 // Appends new_str in hex format to end of original original_str.
 static void append_hex_data(char *original_str, const unsigned char new_str)
 {
-	char msg[LEN_MAX_ISO];
+	char msg[FI_LEN_MAX_ISO];
 
 	// Create new buffer with original_str and new_str.
 	sprintf(msg, "%s%02X", original_str, new_str);
@@ -53,7 +53,7 @@ static void append_hex_data(char *original_str, const unsigned char new_str)
 // Extract 'length' bytes from original_str and store it in the output.
 static void extract_str_data(char *original_str, unsigned int length, char *output)
 {
-	char msg[LEN_MAX_ISO];
+	char msg[FI_LEN_MAX_ISO];
 
 	// Extract 'length' bytes and put into msg buffer
 	memcpy(msg, original_str, length);
@@ -90,14 +90,14 @@ static int is_up_field(int field)
 
 	if(fi_is_valid_field(field))
 	{
-		if(field <= BITMAP_LEN_BITS)
+		if(field <= FI_BITMAP_LEN_BITS)
 		{
 			bitmap = glb_first_bitmap;
 		}
 		else
 		{
 			bitmap = glb_second_bitmap;
-			field -= BITMAP_LEN_BITS;
+			field -= FI_BITMAP_LEN_BITS;
 		}
 
 		field--;
@@ -119,14 +119,14 @@ static int add_in_bitmap(int field)
 
 	if(fi_is_valid_field(field))
 	{
-		if(field < BITMAP_LEN_BITS)
+		if(field < FI_BITMAP_LEN_BITS)
 		{
 			bitmap = glb_first_bitmap;
 		}
 		else
 		{
 			bitmap = glb_second_bitmap;
-			field -= BITMAP_LEN_BITS;
+			field -= FI_BITMAP_LEN_BITS;
 		}
 
 		field--;
@@ -152,14 +152,14 @@ static int remove_from_bitmap(int field)
 
 	if(fi_is_valid_field(field))
 	{
-		if(field < BITMAP_LEN_BITS)
+		if(field < FI_BITMAP_LEN_BITS)
 		{
 			bitmap = glb_first_bitmap;
 		}
 		else
 		{
 			bitmap = glb_second_bitmap;
-			field -= BITMAP_LEN_BITS;
+			field -= FI_BITMAP_LEN_BITS;
 		}
 
 		field--;
@@ -180,7 +180,7 @@ static int remove_from_bitmap(int field)
 static int has_second_bitmap()
 {
 	int i;
-	for(i = 0; i < BITMAP_LEN_BYTES; i++)
+	for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
 	{
 		if(glb_second_bitmap[i])
 		{
@@ -222,7 +222,7 @@ static int decode_bitmap(const char *bmp_hex_str, char *output)
 
 	if(is_valid_bitmap(bmp_hex_str))
 	{
-		for(i = 0; i < BITMAP_LEN_BYTES; i++)
+		for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
 		{
 			tmp[0] = *(bmp_hex_str + (i * 2));
 			tmp[1] = *(bmp_hex_str + (i * 2) + 1);
@@ -232,7 +232,7 @@ static int decode_bitmap(const char *bmp_hex_str, char *output)
 			bmp[i + 1] = '\0';
 		}
 
-		memcpy(output, bmp, BITMAP_LEN_BYTES);
+		memcpy(output, bmp, FI_BITMAP_LEN_BYTES);
 
 		return 0;
 	}
@@ -262,7 +262,7 @@ static void clear_internal_vars()
 	memset(glb_second_bitmap, 0, sizeof(glb_second_bitmap));
 	memset(glb_iso_pack, 0, sizeof(glb_iso_pack));
 
-	for(i = 0; i < NUM_FIELD_MAX; i++)
+	for(i = 0; i < FI_NUM_FIELD_MAX; i++)
 	{
 		glb_fields[i] = NULL;
 	}
@@ -281,7 +281,7 @@ void release()
 {
 	int i = 0;
 
-	for(i = 0; i < NUM_FIELD_MAX; i++)
+	for(i = 0; i < FI_NUM_FIELD_MAX; i++)
 	{
 		if(glb_fields[i] != NULL)
 		{
@@ -297,7 +297,7 @@ int set_mti(const char *mti)
 {
 	if(fi_is_valid_mti(mti))
 	{
-		memcpy(glb_mti, mti, MTI_LEN_BYTES);
+		memcpy(glb_mti, mti, FI_MTI_LEN_BYTES);
 		return 0;
 	}
 
@@ -308,7 +308,7 @@ int set_mti(const char *mti)
 
 int get_mti(char *mti)
 {
-	if(mti != NULL && strlen(glb_mti) == MTI_LEN_BYTES)
+	if(mti != NULL && strlen(glb_mti) == FI_MTI_LEN_BYTES)
 	{
 		sprintf(mti, "%s", glb_mti);
 		return 0;
@@ -395,7 +395,7 @@ int generate_message(char *message)
 	int size_of_length = 0;
 	char format[16];
 
-	if(message == NULL || strlen(glb_mti) != MTI_LEN_BYTES)
+	if(message == NULL || strlen(glb_mti) != FI_MTI_LEN_BYTES)
 	{
 		return -1;
 	}
@@ -404,7 +404,7 @@ int generate_message(char *message)
 	append_str_data(glb_iso_pack, glb_mti);
 
 	// Add first bitmap to iso message.
-	for(i = 0; i < BITMAP_LEN_BYTES; i++)
+	for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
 	{
 		append_hex_data(glb_iso_pack, (const unsigned char) glb_first_bitmap[i]);
 	}
@@ -412,12 +412,12 @@ int generate_message(char *message)
 	// Add second bitmap to iso message (case there is one), it will be stored in the field 1.
 	if(has_second_bitmap())
 	{
-		glb_fields[0] = (char *) malloc(BITMAP_HEX_BYTES + 1);
+		glb_fields[0] = (char *) malloc(FI_BITMAP_HEX_BYTES + 1);
 		if(glb_fields[0] != NULL)
 		{
 			*glb_fields[0] = '\0';
 
-			for(i = 0; i < BITMAP_LEN_BYTES; i++)
+			for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
 			{
 				append_hex_data(glb_fields[0], (const unsigned char) glb_second_bitmap[i]);
 			}
@@ -427,7 +427,7 @@ int generate_message(char *message)
 	}
 
 	// Add fields.
-	for(i = 0; i < NUM_FIELD_MAX; i++)
+	for(i = 0; i < FI_NUM_FIELD_MAX; i++)
 	{
 		real_i = i + 1;
 
@@ -456,7 +456,7 @@ int decode_message(const char *message)
 	int i = 0;
 	struct fi_field_info _fi_field;
 	int length = 0;
-	char msg_to_decode[LEN_MAX_ISO];
+	char msg_to_decode[FI_LEN_MAX_ISO];
 	char buffer[2014];
 
 	release();
@@ -465,7 +465,7 @@ int decode_message(const char *message)
 	sprintf(msg_to_decode, "%s", message);
 
 	// Extract mti.
-	extract_str_data(msg_to_decode, MTI_LEN_BYTES, glb_mti);
+	extract_str_data(msg_to_decode, FI_MTI_LEN_BYTES, glb_mti);
 	if(!fi_is_valid_mti(glb_mti))
 	{
 		debug_print("Error: [%s]: Invalid ISO message!\n", __FUNCTION__);
@@ -473,18 +473,18 @@ int decode_message(const char *message)
 	}
 
 	// Extract first bitmap.
-	extract_str_data(msg_to_decode, BITMAP_HEX_BYTES, buffer);
+	extract_str_data(msg_to_decode, FI_BITMAP_HEX_BYTES, buffer);
 	decode_first_bitmap(buffer);
 
 	// If there is second bitmap we will to extract it also (aka field 1).
 	if(is_up_bit_one())
 	{
-		extract_str_data(msg_to_decode, BITMAP_HEX_BYTES, buffer);
+		extract_str_data(msg_to_decode, FI_BITMAP_HEX_BYTES, buffer);
 		decode_second_bitmap(buffer);
 	}
 
 	// Extract fields (skip field 1).
-	for(i = 2; i <= NUM_FIELD_MAX; i++)
+	for(i = 2; i <= FI_NUM_FIELD_MAX; i++)
 	{
 		if(is_up_field(i) > 0)
 		{
