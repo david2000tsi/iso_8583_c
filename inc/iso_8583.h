@@ -14,6 +14,16 @@ int iso_init(int iso_version);
 void iso_release();
 
 /**
+ * @brief Enable auto padding of fields with fixed length.
+ */
+void iso_enable_auto_padding();
+
+/**
+ * @brief Disable auto padding of fields with fixed length.
+ */
+void iso_disable_auto_padding();
+
+/**
  * @brief Set message mti.
  * @param[in] mti The message mti.
  * @return Returns 0 to success or -1 case error.
