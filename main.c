@@ -62,9 +62,34 @@ int main(int argc, char *argv[])
 			printf("Field %03d: [%s]\n", 34, field_str);
 		}
 
+		if(iso_get_field(36, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 36, field_str);
+		}
+
+		if(iso_get_field(50, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 50, field_str);
+		}
+
+		if(iso_get_field(72, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 72, field_str);
+		}
+
 		if(iso_get_field(76, field_str) == 0)
 		{
 			printf("Field %03d: [%s]\n", 76, field_str);
+		}
+
+		if(iso_get_field(90, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 90, field_str);
+		}
+
+		if(iso_get_field(95, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 95, field_str);
 		}
 	}
 

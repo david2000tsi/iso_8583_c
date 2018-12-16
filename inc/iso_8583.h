@@ -14,7 +14,9 @@ int iso_init(int iso_version);
 void iso_release();
 
 /**
- * @brief Enable auto padding of fields with fixed length.
+ * @brief Enable auto padding of fields with fixed length (according fields data type).
+ * This following fields types will be padding left with '0' character: FI_TYPE__N, FI_TYPE__AN, FI_TYPE__NS, FI_TYPE__ANP, FI_TYPE__ANS.
+ * The other fields will be padding right with ' ' character.
  */
 void iso_enable_auto_padding();
 
