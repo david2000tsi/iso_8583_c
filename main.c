@@ -5,11 +5,6 @@
 #include "fields_info.h"
 #include "iso_8583.h"
 
-#define ISO_MSG "0200D00000035000400001100042000000001601234567890123451234567890121111111107777777724947654652576423" \
-                "5348753451044444175849751472914297587452847592435672497654295247589734254732852438783945729455330348" \
-                "6409624354354444222777709876543218999999999999999999999999999999999999999987774372948636547656894769" \
-                "84987564264363567"
-
 int main(int argc, char *argv[])
 {
 	char iso_msg[1024];
@@ -22,6 +17,7 @@ int main(int argc, char *argv[])
 	printf("\nGenerate ISO message test:\n");
 
 	iso_init(FI_ISO8583_1987);
+	iso_enable_auto_padding();
 	iso_set_mti("0200");
 
 	iso_add_field(2, "0123456789012345", 16);
@@ -30,7 +26,10 @@ int main(int argc, char *argv[])
 	iso_add_field(32, "7777777", 7);
 	iso_add_field(34, "947654652576423534875345", 24);
 	iso_add_field(36, "44441758497514729142975874528475924356724976542952475897342547328524387839457294553303486409624354354444", 104);
+	iso_add_field(37, "373737", 0); // Auto padding to length 12 (using '0')
+	iso_add_field(43, "434343", 0); // Auto padding to length 40 (using '0')
 	iso_add_field(50, "222", 3);
+	iso_add_field(52, "52", 0); // Auto padding to length 8 (using ' ')
 	iso_add_field(72, "7777", 4);
 	iso_add_field(76, "0987654321", 10);
 	iso_add_field(90, "899999999999999999999999999999999999999998", 42);
@@ -67,9 +66,24 @@ int main(int argc, char *argv[])
 			printf("Field %03d: [%s]\n", 36, field_str);
 		}
 
+		if(iso_get_field(37, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 37, field_str);
+		}
+
+		if(iso_get_field(43, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 43, field_str);
+		}
+
 		if(iso_get_field(50, field_str) == 0)
 		{
 			printf("Field %03d: [%s]\n", 50, field_str);
+		}
+
+		if(iso_get_field(52, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 52, field_str);
 		}
 
 		if(iso_get_field(72, field_str) == 0)
@@ -97,7 +111,7 @@ int main(int argc, char *argv[])
 
 	printf("\nDecode ISO message test:\n");
 
-	if(iso_decode_message(ISO_MSG) == 0)
+	if(iso_decode_message(iso_msg) == 0)
 	{
 		printf("ISO decoded successfully, fields:\n");
 
@@ -126,9 +140,24 @@ int main(int argc, char *argv[])
 			printf("Field %03d: [%s]\n", 36, field_str);
 		}
 
+		if(iso_get_field(37, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 37, field_str);
+		}
+
+		if(iso_get_field(43, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 43, field_str);
+		}
+
 		if(iso_get_field(50, field_str) == 0)
 		{
 			printf("Field %03d: [%s]\n", 50, field_str);
+		}
+
+		if(iso_get_field(52, field_str) == 0)
+		{
+			printf("Field %03d: [%s]\n", 52, field_str);
 		}
 
 		if(iso_get_field(72, field_str) == 0)
