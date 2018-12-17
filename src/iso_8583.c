@@ -333,6 +333,31 @@ static void _iso_insert_padding(const struct fi_field_info *fi_field, char *data
 	}
 }
 
+void iso_bin_to_hex_str(const unsigned char *bin, unsigned int length, char *hex_str)
+{
+	int i = 0;
+
+	for(i = 0; i < length; i++)
+	{
+		sprintf(hex_str + (i * 2), "%02X", *(bin + i));
+	}
+}
+
+void iso_hex_str_to_bin(const char *hex_str, unsigned int length, unsigned char *bin)
+{
+	int i = 0;
+	char tmp[8];
+
+	for(i = 0; i < (length / 2); i++)
+	{
+		tmp[0] = *(hex_str + (i * 2));
+		tmp[1] = *(hex_str + (i * 2) + 1);
+		tmp[2] = '\0';
+
+		bin[i] = (char) strtol(tmp, NULL, 16);
+	}
+}
+
 int iso_init(int iso_version)
 {
 	_iso_clear_internal_vars();
