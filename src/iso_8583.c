@@ -25,6 +25,9 @@ static char glb_iso_pack[FI_LEN_MAX_ISO + 1];
 // Pointer Vector: Store the fields data.
 static char *glb_fields[FI_NUM_FIELD_MAX];
 
+// Auto padding flag.
+static int glb_auto_padding = 0;
+
 // Function prototype.
 static int _iso_has_second_bitmap();
 
@@ -268,6 +271,68 @@ static void _iso_clear_internal_vars()
 	}
 }
 
+// Insert padding left in the string.
+static void _iso_insert_padding_left(char *original_str, int target_length, char padding_chr)
+{
+	char buffer[1024];
+	char field[1024];
+	unsigned int original_str_len = strlen(original_str);
+	unsigned int diff = 0;
+
+	if(original_str_len < target_length && (padding_chr == ' ' || padding_chr == '0'))
+	{
+		// Gets the diff between original_str and target_length.
+		diff = target_length - original_str_len;
+
+		// Fill buffer with padding_chr.
+		memset(buffer, padding_chr, diff);
+		buffer[diff] = '\0';
+
+		// Generate field with padding.
+		sprintf(field, "%s%s", buffer, original_str);
+
+		sprintf(original_str, "%s", field);
+	}
+}
+
+// Insert padding right in the string.
+static void _iso_insert_padding_right(char *original_str, int target_length, char padding_chr)
+{
+	unsigned int original_str_len = strlen(original_str);
+	unsigned int diff = 0;
+
+	if(original_str_len < target_length && (padding_chr == ' ' || padding_chr == '0'))
+	{
+		diff = target_length - original_str_len;
+
+		memset(original_str + original_str_len, padding_chr, diff);
+		original_str[target_length] = '\0';
+	}
+}
+
+static void _iso_insert_padding(const struct fi_field_info *fi_field, char *data)
+{
+	int padding_left = 0;
+
+	if(!fi_field->is_variable_field)
+	{
+		if(strcmp((const char *) fi_field->type, (const char *) FI_TYPE__N)   == 0) { padding_left = 1; }
+		if(strcmp((const char *) fi_field->type, (const char *) FI_TYPE__AN)  == 0) { padding_left = 1; }
+		if(strcmp((const char *) fi_field->type, (const char *) FI_TYPE__NS)  == 0) { padding_left = 1; }
+		if(strcmp((const char *) fi_field->type, (const char *) FI_TYPE__ANP) == 0) { padding_left = 1; }
+		if(strcmp((const char *) fi_field->type, (const char *) FI_TYPE__ANS) == 0) { padding_left = 1; }
+
+		if(padding_left)
+		{
+			_iso_insert_padding_left(data, fi_field->length, '0');
+		}
+		else
+		{
+			_iso_insert_padding_right(data, fi_field->length, ' ');
+		}
+	}
+}
+
 int iso_init(int iso_version)
 {
 	_iso_clear_internal_vars();
@@ -291,6 +356,16 @@ void iso_release()
 	}
 
 	_iso_clear_internal_vars();
+}
+
+void iso_enable_auto_padding()
+{
+	glb_auto_padding = 1;
+}
+
+void iso_disable_auto_padding()
+{
+	glb_auto_padding = 0;
 }
 
 int iso_set_mti(const char *mti)
@@ -317,14 +392,34 @@ int iso_get_mti(char *mti)
 	return -1;
 }
 
+// Auto padding only fill fields with fixed length!
 int iso_add_field(int field, const char *data, int length)
 {
 	char *field_value = NULL;
+	struct fi_field_info fi_field;
+	char buffer[1024];
 
 	if(field == 1)
 	{
 		debug_print("Error: [%s]: Reserved use for field (%d)!\n", __FUNCTION__, field);
 		return -1;
+	}
+
+	// Check auto padding...
+	if(glb_auto_padding && fi_is_valid_field(field))
+	{
+		if(fi_get_field_info(field, &fi_field) == 0)
+		{
+			// Store field into buffer.
+			sprintf(buffer, "%s", data);
+
+			// Insert padding.
+			_iso_insert_padding(&fi_field, buffer);
+
+			// Update variables.
+			data = buffer;
+			length = strlen(buffer);
+		}
 	}
 
 	if(fi_is_valid_field_value(field, data))
