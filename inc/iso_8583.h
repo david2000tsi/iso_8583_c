@@ -2,6 +2,22 @@
 #define ISO8583_H_
 
 /**
+ * @brief Generates hex string from binary data.
+ * @param[in] bin The binary data to be converted.
+ * @param[in] length The binary data length.
+ * @param[out] bin The converted hex string, will be double length of the binary data.
+ */
+void iso_bin_to_hex_str(const unsigned char *bin, unsigned int length, char *hex_str);
+
+/**
+ * @brief Generates binary data from hex string.
+ * @param[in] hex_str The hex string to be converted.
+ * @param[in] length The hex string length.
+ * @param[out] bin The binary converted data, will be half length of the hex string.
+ */
+void iso_hex_str_to_bin(const char *hex_str, unsigned int length, unsigned char *bin);
+
+/**
  * @brief Initialize iso 8583 message.
  * @param[in] iso_version The iso version to be used.
  * @return Returns 0 if was initized with success or -1 case error.

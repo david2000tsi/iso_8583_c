@@ -43,12 +43,15 @@ static void _iso_append_str_data(char *original_str, const char *new_str)
 }
 
 // Appends new_str in hex format to end of original original_str.
-static void _iso_append_hex_data(char *original_str, const unsigned char new_str)
+static void _iso_append_hex_data(char *original_str, const unsigned char *new_str, unsigned int length)
 {
 	char msg[FI_LEN_MAX_ISO];
+	char buffer[1024];
+
+	iso_bin_to_hex_str(new_str, length, buffer);
 
 	// Create new buffer with original_str and new_str.
-	sprintf(msg, "%s%02X", original_str, new_str);
+	sprintf(msg, "%s%s", original_str, buffer);
 
 	sprintf(original_str, "%s", msg);
 }
@@ -219,24 +222,9 @@ static int _iso_is_valid_bitmap(const char *bmp_hex_str)
 // Decode bitmap from hex string to binary.
 static int _iso_decode_bitmap(const char *bmp_hex_str, char *output)
 {
-	int i = 0;
-	char tmp[8];
-	char bmp[16];
-
 	if(_iso_is_valid_bitmap(bmp_hex_str))
 	{
-		for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
-		{
-			tmp[0] = *(bmp_hex_str + (i * 2));
-			tmp[1] = *(bmp_hex_str + (i * 2) + 1);
-			tmp[2] = '\0';
-
-			bmp[i] = (char) strtol(tmp, NULL, 16);
-			bmp[i + 1] = '\0';
-		}
-
-		memcpy(output, bmp, FI_BITMAP_LEN_BYTES);
-
+		iso_hex_str_to_bin(bmp_hex_str, strlen(bmp_hex_str), (unsigned char *) output);
 		return 0;
 	}
 
@@ -330,6 +318,31 @@ static void _iso_insert_padding(const struct fi_field_info *fi_field, char *data
 		{
 			_iso_insert_padding_right(data, fi_field->length, ' ');
 		}
+	}
+}
+
+void iso_bin_to_hex_str(const unsigned char *bin, unsigned int length, char *hex_str)
+{
+	int i = 0;
+
+	for(i = 0; i < length; i++)
+	{
+		sprintf(hex_str + (i * 2), "%02X", *(bin + i));
+	}
+}
+
+void iso_hex_str_to_bin(const char *hex_str, unsigned int length, unsigned char *bin)
+{
+	int i = 0;
+	char tmp[8];
+
+	for(i = 0; i < (length / 2); i++)
+	{
+		tmp[0] = *(hex_str + (i * 2));
+		tmp[1] = *(hex_str + (i * 2) + 1);
+		tmp[2] = '\0';
+
+		bin[i] = (char) strtol(tmp, NULL, 16);
 	}
 }
 
@@ -499,10 +512,7 @@ int iso_generate_message(char *message)
 	_iso_append_str_data(glb_iso_pack, glb_mti);
 
 	// Add first bitmap to iso message.
-	for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
-	{
-		_iso_append_hex_data(glb_iso_pack, (const unsigned char) glb_first_bitmap[i]);
-	}
+	_iso_append_hex_data(glb_iso_pack, (const unsigned char *) glb_first_bitmap, FI_BITMAP_LEN_BYTES);
 
 	// Add second bitmap to iso message (case there is one), it will be stored in the field 1.
 	if(_iso_has_second_bitmap())
@@ -512,11 +522,7 @@ int iso_generate_message(char *message)
 		{
 			*glb_fields[0] = '\0';
 
-			for(i = 0; i < FI_BITMAP_LEN_BYTES; i++)
-			{
-				_iso_append_hex_data(glb_fields[0], (const unsigned char) glb_second_bitmap[i]);
-			}
-
+			_iso_append_hex_data(glb_fields[0], (const unsigned char *) glb_second_bitmap, FI_BITMAP_LEN_BYTES);
 			_iso_add_in_bitmap(1);
 		}
 	}
