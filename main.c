@@ -41,69 +41,12 @@ int main(int argc, char *argv[])
 
 		printf("Recovering fields:\n");
 
-		if(iso_get_field(2, field_str) == 0)
+		for(int i = 2; i <= 128; i++)
 		{
-			printf("Field %03d: [%s]\n", 2, field_str);
-		}
-
-		if(iso_get_field(4, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 4, field_str);
-		}
-
-		if(iso_get_field(31, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 31, field_str);
-		}
-
-		if(iso_get_field(34, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 34, field_str);
-		}
-
-		if(iso_get_field(36, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 36, field_str);
-		}
-
-		if(iso_get_field(37, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 37, field_str);
-		}
-
-		if(iso_get_field(43, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 43, field_str);
-		}
-
-		if(iso_get_field(50, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 50, field_str);
-		}
-
-		if(iso_get_field(52, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 52, field_str);
-		}
-
-		if(iso_get_field(72, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 72, field_str);
-		}
-
-		if(iso_get_field(76, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 76, field_str);
-		}
-
-		if(iso_get_field(90, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 90, field_str);
-		}
-
-		if(iso_get_field(95, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 95, field_str);
+			if(iso_is_set_field(i) && iso_get_field(i, field_str) == 0)
+			{
+				printf("Field %03d: [%s]\n", i, field_str);
+			}
 		}
 	}
 
@@ -115,69 +58,12 @@ int main(int argc, char *argv[])
 	{
 		printf("ISO decoded successfully, fields:\n");
 
-		if(iso_get_field(2, field_str) == 0)
+		for(int i = 2; i <= 128; i++)
 		{
-			printf("Field %03d: [%s]\n", 2, field_str);
-		}
-
-		if(iso_get_field(4, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 4, field_str);
-		}
-
-		if(iso_get_field(31, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 31, field_str);
-		}
-
-		if(iso_get_field(34, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 34, field_str);
-		}
-
-		if(iso_get_field(36, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 36, field_str);
-		}
-
-		if(iso_get_field(37, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 37, field_str);
-		}
-
-		if(iso_get_field(43, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 43, field_str);
-		}
-
-		if(iso_get_field(50, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 50, field_str);
-		}
-
-		if(iso_get_field(52, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 52, field_str);
-		}
-
-		if(iso_get_field(72, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 72, field_str);
-		}
-
-		if(iso_get_field(76, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 76, field_str);
-		}
-
-		if(iso_get_field(90, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 90, field_str);
-		}
-
-		if(iso_get_field(95, field_str) == 0)
-		{
-			printf("Field %03d: [%s]\n", 95, field_str);
+			if(iso_is_set_field(i) && iso_get_field(i, field_str) == 0)
+			{
+				printf("Field %03d: [%s]\n", i, field_str);
+			}
 		}
 	}
 
