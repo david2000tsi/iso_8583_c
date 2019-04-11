@@ -348,7 +348,7 @@ void iso_hex_str_to_bin(const char *hex_str, unsigned int length, unsigned char 
 
 int iso_init(int iso_version)
 {
-	_iso_clear_internal_vars();
+	iso_release();
 
 	fi_init_field_info(iso_version);
 
@@ -494,6 +494,16 @@ int iso_remove_field(int field)
 	debug_print("Error: [%s]: Invalid field number (%d)\n", __FUNCTION__, field);
 
 	return -1;
+}
+
+int iso_is_set_field(int field)
+{
+	if(fi_is_valid_field(field))
+	{
+		return (glb_fields[field - 1] != NULL);
+	}
+
+	return 0;
 }
 
 int iso_generate_message(char *message)

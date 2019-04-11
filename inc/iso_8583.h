@@ -80,6 +80,13 @@ int iso_get_field(int field, char *data);
 int iso_remove_field(int field);
 
 /**
+ * @brief Check if there is data in field.
+ * @param[in] field The field number.
+ * @return Returns 1 case there is data in the field or returns 0 if field is empty or invalid.
+ */
+int iso_is_set_field(int field);
+
+/**
  * @brief Generate iso message according added fields.
  * @param[out] message The buffer where the message will be stored.
  * @return Returns 0 to success or -1 case error.
